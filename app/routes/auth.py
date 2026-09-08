@@ -1,7 +1,8 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, redirect, url_for, flash
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Email, Length
+from flask_login import login_user
 import bcrypt
 
 from app.extensions import db
@@ -28,6 +29,20 @@ class RegistrationForm(FlaskForm):
     )
 
     submit = SubmitField("Create Account")
+
+
+class LoginForm(FlaskForm):
+    email = StringField(
+        "Email",
+        validators=[DataRequired(), Email()]
+    )
+
+    password = PasswordField(
+        "Password",
+        validators=[DataRequired()]
+    )
+
+    submit = SubmitField("Login")
 
 
 @auth_bp.route("/register", methods=["GET", "POST"])
@@ -66,6 +81,21 @@ def register():
     )
 
 
-@auth_bp.route("/login")
+@auth_bp.route("/login", methods=["GET", "POST"])
 def login():
-    return "Login page"
+    form = LoginForm()
+
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+
+        if user and bcrypt.checkpw(
+            form.password.data.encode("utf-8"),
+            user.password_hash.encode("utf-8")
+        ):
+            login_user(user)
+            flash("Logged in successfully.", "success")
+            return redirect(url_for("main.dashboard"))  # placeholder — we'll build this route next
+        else:
+            flash("Invalid email or password.", "danger")
+
+    return render_template("auth/login.html", form=form)

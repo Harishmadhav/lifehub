@@ -7,6 +7,8 @@ from app.models.note import Note
 from app.models.habit import Habit
 from app.models.habit_completion import HabitCompletion
 from app.routes.auth import auth_bp
+from app.routes.main import main_bp
+
 
 def create_app():
     app = Flask(__name__)
@@ -15,8 +17,10 @@ def create_app():
 
     db.init_app(app)
     login_manager.init_app(app)
+    login_manager.login_view = "auth.login"
 
     app.register_blueprint(auth_bp)
+    app.register_blueprint(main_bp)
 
     @login_manager.user_loader
     def load_user(user_id):
