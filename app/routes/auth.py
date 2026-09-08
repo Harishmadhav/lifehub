@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Email, Length
-from flask_login import login_user
+from flask_login import login_user, logout_user, login_required
 import bcrypt
 
 from app.extensions import db
@@ -99,3 +99,10 @@ def login():
             flash("Invalid email or password.", "danger")
 
     return render_template("auth/login.html", form=form)
+
+@auth_bp.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    flash("You have been logged out.", "info")
+    return redirect(url_for("auth.login"))
