@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard - LifeHub</title>
+</head>
+<body>
+    <h1>Welcome, {{ user }}!</h1>
+    <a href="{{ url_for('auth.logout') }}">Logout</a>
+
+    <hr>
+
+    <h2>Today's Tasks</h2>
+    <ul>
+        {% for task in tasks %}
+            <li>{{ task.title }} — {{ task.status }}</li>
+        {% endfor %}
+    </ul>
+
+    <hr>
+
+    <h2>Habit Overview</h2>
+    <ul>
+        {% for habit in habits %}
+            <li>{{ habit.name }} — Current streak: {{ habit.current_streak }}</li>
+        {% endfor %}
+    </ul>
+
+    <hr>
+
+    <h2>Productivity Summary</h2>
+    <p>Completed tasks: {{ completed_count }}</p>
+    <p>Pending tasks: {{ pending_count }}</p>
+
+</body>
+</html>
