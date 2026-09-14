@@ -47,3 +47,10 @@ def create_task():
         return redirect(url_for("main.dashboard"))
 
     return render_template("tasks/create_task.html", form=form)
+
+
+@tasks_bp.route("/tasks")
+@login_required
+def view_tasks():
+    tasks = Task.query.filter_by(user_id=current_user.id).order_by(Task.created_at.desc()).all()
+    return render_template("tasks/view_tasks.html", tasks=tasks)

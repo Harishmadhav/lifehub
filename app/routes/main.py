@@ -1,17 +1,18 @@
 from flask import Blueprint, render_template
 from flask_login import login_required, current_user
 
+from app.models.task import Task
+
 main_bp = Blueprint("main", __name__)
 
 
 @main_bp.route("/dashboard")
 @login_required
 def dashboard():
-    # Dummy data for now — will be replaced with real DB queries in Task/Habit CRUD phases
-    dummy_tasks = [
-        {"title": "Finish LifeHub login", "status": "Completed"},
-        {"title": "Build dashboard", "status": "In Progress"},
-    ]
+    tasks = Task.query.filter_by(user_id=current_user.id).order_by(Task.created_at.desc()).limit(5).all()
+
+    completed_count = Task.query.filter_by(user_id=current_user.id, status="completed").count()
+    pending_count = Task.query.filter_by(user_id=current_user.id, status="pending").count()
 
     dummy_habits = [
         {"name": "Read 20 minutes", "current_streak": 3},
@@ -21,8 +22,8 @@ def dashboard():
     return render_template(
         "dashboard.html",
         user=current_user.username,
-        tasks=dummy_tasks,
+        tasks=tasks,
         habits=dummy_habits,
-        completed_count=1,
-        pending_count=1
+        completed_count=completed_count,
+        pending_count=pending_count
     )

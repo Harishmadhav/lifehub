@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Tasks - LifeHub</title>
+</head>
+<body>
+    <h2>My Tasks</h2>
+
+    <p><a href="{{ url_for('tasks.create_task') }}">+ Create New Task</a></p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <p style="color: green;">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if tasks %}
+        <table border="1" cellpadding="8">
+            <tr>
+                <th>Title</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Due Date</th>
+            </tr>
+            {% for task in tasks %}
+            <tr>
+                <td>{{ task.title }}</td>
+                <td>{{ task.priority }}</td>
+                <td>{{ task.status }}</td>
+                <td>{{ task.due_date if task.due_date else "—" }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>No tasks yet. Create your first one!</p>
+    {% endif %}
+
+    <p><a href="{{ url_for('main.dashboard') }}">Back to Dashboard</a></p>
+</body>
+</html>
