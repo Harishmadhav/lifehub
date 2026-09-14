@@ -8,6 +8,7 @@ from app.models.habit import Habit
 from app.models.habit_completion import HabitCompletion
 from app.routes.auth import auth_bp
 from app.routes.main import main_bp
+from app.routes.tasks import tasks_bp
 
 
 def create_app():
@@ -21,6 +22,7 @@ def create_app():
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(main_bp)
+    app.register_blueprint(tasks_bp)
 
     @login_manager.user_loader
     def load_user(user_id):
