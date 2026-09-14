@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Task - LifeHub</title>
+</head>
+<body>
+    <h2>Edit Task</h2>
+
+    <form method="POST">
+        {{ form.hidden_tag() }}
+
+        <p>
+            {{ form.title.label }}<br>
+            {{ form.title() }}
+        </p>
+
+        <p>
+            {{ form.description.label }}<br>
+            {{ form.description() }}
+        </p>
+
+        <p>
+            {{ form.priority.label }}<br>
+            {{ form.priority() }}
+        </p>
+
+        <p>
+            {{ form.due_date.label }} (format: YYYY-MM-DD HH:MM)<br>
+            {{ form.due_date() }}
+            {% for error in form.due_date.errors %}
+                <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </p>
+
+        {{ form.submit() }}
+    </form>
+
+    <p><a href="{{ url_for('tasks.view_tasks') }}">Back to My Tasks</a></p>
+</body>
+</html>

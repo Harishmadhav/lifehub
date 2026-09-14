@@ -23,13 +23,27 @@
                 <th>Priority</th>
                 <th>Status</th>
                 <th>Due Date</th>
+                <th>Actions</th>
             </tr>
-            {% for task in tasks %}
+                    {% for task in tasks %}
             <tr>
                 <td>{{ task.title }}</td>
                 <td>{{ task.priority }}</td>
                 <td>{{ task.status }}</td>
                 <td>{{ task.due_date if task.due_date else "—" }}</td>
+                <td>
+                    <a href="{{ url_for('tasks.edit_task', task_id=task.id) }}">Edit</a>
+
+                    {% if task.status != "completed" %}
+                    <form method="POST" action="{{ url_for('tasks.complete_task', task_id=task.id) }}" style="display:inline;">
+                        <button type="submit">Complete</button>
+                    </form>
+                    {% endif %}
+
+                    <form method="POST" action="{{ url_for('tasks.delete_task', task_id=task.id) }}" style="display:inline;" onsubmit="return confirm('Delete this task?');">
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
             </tr>
             {% endfor %}
         </table>
