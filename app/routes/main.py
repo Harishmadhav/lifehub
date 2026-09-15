@@ -2,6 +2,7 @@ from flask import Blueprint, render_template
 from flask_login import login_required, current_user
 
 from app.models.task import Task
+from app.models.habit import Habit
 
 main_bp = Blueprint("main", __name__)
 
@@ -14,16 +15,13 @@ def dashboard():
     completed_count = Task.query.filter_by(user_id=current_user.id, status="completed").count()
     pending_count = Task.query.filter_by(user_id=current_user.id, status="pending").count()
 
-    dummy_habits = [
-        {"name": "Read 20 minutes", "current_streak": 3},
-        {"name": "Exercise", "current_streak": 5},
-    ]
+    habits = Habit.query.filter_by(user_id=current_user.id).order_by(Habit.created_at.desc()).limit(5).all()
 
     return render_template(
         "dashboard.html",
         user=current_user.username,
         tasks=tasks,
-        habits=dummy_habits,
+        habits=habits,
         completed_count=completed_count,
         pending_count=pending_count
     )
