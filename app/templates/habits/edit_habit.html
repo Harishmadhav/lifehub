@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Habit - LifeHub</title>
+</head>
+<body>
+    <h2>Edit Habit</h2>
+
+    <form method="POST">
+        {{ form.hidden_tag() }}
+
+        <p>
+            {{ form.name.label }}<br>
+            {{ form.name() }}
+        </p>
+
+        <p>
+            {{ form.description.label }}<br>
+            {{ form.description(rows=4, cols=40) }}
+        </p>
+
+        <p>
+            {{ form.frequency.label }}<br>
+            {{ form.frequency() }}
+        </p>
+
+        {{ form.submit() }}
+    </form>
+
+    <p><a href="{{ url_for('habits.view_habits') }}">Back to My Habits</a></p>
+</body>
+</html>
