@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 
 from app.models.task import Task
 from app.models.habit import Habit
+from app.models.note import Note
 
 main_bp = Blueprint("main", __name__)
 
@@ -24,4 +25,26 @@ def dashboard():
         habits=habits,
         completed_count=completed_count,
         pending_count=pending_count
+    )
+
+
+@main_bp.route("/analytics")
+@login_required
+def analytics():
+    completed_tasks = Task.query.filter_by(user_id=current_user.id, status="completed").count()
+    pending_tasks = Task.query.filter_by(user_id=current_user.id, status="pending").count()
+
+    habits = Habit.query.filter_by(user_id=current_user.id).all()
+    habit_names = [h.name for h in habits]
+    habit_streaks = [h.current_streak for h in habits]
+
+    total_notes = Note.query.filter_by(user_id=current_user.id).count()
+
+    return render_template(
+        "analytics.html",
+        completed_tasks=completed_tasks,
+        pending_tasks=pending_tasks,
+        habit_names=habit_names,
+        habit_streaks=habit_streaks,
+        total_notes=total_notes
     )
