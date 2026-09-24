@@ -1,46 +1,41 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Dashboard - LifeHub</title>
-</head>
-<body>
-        <h1>Welcome, {{ user }}!</h1>
-    <a href="{{ url_for('auth.logout') }}">Logout</a>
-    <a href="{{ url_for('main.analytics') }}">View Analytics</a>
-    <a href="{{ url_for('main.ai_daily_plan') }}">Get AI Daily Plan</a>
-    <a href="{{ url_for('chat.chat') }}">Chat with Assistant</a>
+{% extends "base.html" %}
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <p style="color: green;">{{ message }}</p>
-            {% endfor %}
+{% block title %}Dashboard - LifeHub{% endblock %}
+
+{% block content %}
+    <h1>Welcome, {{ user }}!</h1>
+
+    <div class="card">
+        <h3>Today's Tasks</h3>
+        {% if tasks %}
+            <ul>
+                {% for task in tasks %}
+                    <li>{{ task.title }} — {{ task.status }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="empty-state">No tasks yet.</p>
         {% endif %}
-    {% endwith %}
+        <a href="{{ url_for('tasks.view_tasks') }}">View all tasks →</a>
+    </div>
 
-    <hr>
+    <div class="card">
+        <h3>Habit Overview</h3>
+        {% if habits %}
+            <ul>
+                {% for habit in habits %}
+                    <li>{{ habit.name }} — <span class="streak-badge">{{ habit.current_streak }} day streak</span></li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="empty-state">No habits yet.</p>
+        {% endif %}
+        <a href="{{ url_for('habits.view_habits') }}">View all habits →</a>
+    </div>
 
-    <h2>Today's Tasks</h2>
-    <ul>
-        {% for task in tasks %}
-            <li>{{ task.title }} — {{ task.status }}</li>
-        {% endfor %}
-    </ul>
-
-    <hr>
-
-    <h2>Habit Overview</h2>
-    <ul>
-        {% for habit in habits %}
-            <li>{{ habit.name }} — Current streak: {{ habit.current_streak }}</li>
-        {% endfor %}
-    </ul>
-
-    <hr>
-
-    <h2>Productivity Summary</h2>
-    <p>Completed tasks: {{ completed_count }}</p>
-    <p>Pending tasks: {{ pending_count }}</p>
-
-</body>
-</html>
+    <div class="card">
+        <h3>Productivity Summary</h3>
+        <p>Completed tasks: {{ completed_count }}</p>
+        <p>Pending tasks: {{ pending_count }}</p>
+    </div>
+{% endblock %}

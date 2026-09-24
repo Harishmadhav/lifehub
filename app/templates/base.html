@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}LifeHub{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="brand">LifeHub</div>
+            <nav>
+                <a href="{{ url_for('main.dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('tasks.view_tasks') }}">Tasks</a>
+                <a href="{{ url_for('notes.view_notes') }}">Notes</a>
+                <a href="{{ url_for('habits.view_habits') }}">Habits</a>
+                <a href="{{ url_for('main.analytics') }}">Analytics</a>
+                <a href="{{ url_for('main.ai_daily_plan') }}">AI Daily Plan</a>
+                <a href="{{ url_for('chat.chat') }}">Chat Assistant</a>
+            </nav>
+            <div class="logout">
+                <a href="{{ url_for('auth.logout') }}">Logout</a>
+            </div>
+        </aside>
+
+        <main class="main">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>
