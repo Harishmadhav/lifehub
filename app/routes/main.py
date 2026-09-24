@@ -1,3 +1,5 @@
+import markdown
+from app.services.ai_service import generate_daily_plan
 from flask import Blueprint, render_template
 from flask_login import login_required, current_user
 
@@ -48,3 +50,13 @@ def analytics():
         habit_streaks=habit_streaks,
         total_notes=total_notes
     )
+@main_bp.route("/ai/daily-plan")
+@login_required
+def ai_daily_plan():
+    tasks = Task.query.filter_by(user_id=current_user.id, status="pending").all()
+    habits = Habit.query.filter_by(user_id=current_user.id).all()
+
+    plan_raw = generate_daily_plan(tasks, habits)
+    plan = markdown.markdown(plan_raw)
+
+    return render_template("ai_plan.html", plan=plan)

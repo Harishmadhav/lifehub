@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Assistant - LifeHub</title>
+</head>
+<body>
+    <h1>Chat with LifeHub Assistant</h1>
+    <p><a href="{{ url_for('main.dashboard') }}">Back to Dashboard</a></p>
+
+    <hr>
+
+    <form method="POST">
+        <textarea name="message" rows="3" cols="60" placeholder="Ask about your tasks, habits, or productivity..." required>{{ user_message or "" }}</textarea>
+        <br><br>
+        <button type="submit">Ask</button>
+    </form>
+
+    {% if reply %}
+    <hr>
+    <h3>Assistant:</h3>
+    <div style="max-width: 600px; line-height: 1.6; padding: 15px; border: 1px solid #ccc; border-radius: 8px;">
+        {{ reply | safe }}
+    </div>
+    {% endif %}
+</body>
+</html>
