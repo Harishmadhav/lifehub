@@ -413,3 +413,16 @@ button:hover, input[type=submit]:hover, .btn:hover {
 }
 .schedule-item:last-child { border-bottom: none; }
 .schedule-item .time { color: var(--accent-dark); font-weight: 500; }
+
+.actions-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.actions-row form { display: inline-flex; margin: 0; }
+.actions-row button {
+  padding: 6px 12px;
+  font-size: 0.82rem;
+  white-space: nowrap;
+}

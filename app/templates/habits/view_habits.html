@@ -1,58 +1,49 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>My Habits - LifeHub</title>
-</head>
-<body>
-    <h2>My Habits</h2>
+{% extends "base.html" %}
 
-    <p><a href="{{ url_for('habits.create_habit') }}">+ Create New Habit</a></p>
+{% block title %}My Habits - LifeHub{% endblock %}
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <p style="color: green;">{{ message }}</p>
-            {% endfor %}
+{% block content %}
+    <h1>My Habits</h1>
+    <p><a href="{{ url_for('habits.create_habit') }}" class="btn">+ Create New Habit</a></p>
+
+    <div class="card">
+        {% if habits %}
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <th>Frequency</th>
+                    <th>Current Streak</th>
+                    <th>Longest Streak</th>
+                    <th>Actions</th>
+                </tr>
+                {% for habit in habits %}
+                <tr>
+                    <td>{{ habit.name }}</td>
+                    <td>{{ habit.frequency }}</td>
+                    <td><span class="streak-badge">🔥 {{ habit.current_streak }}</span></td>
+                    <td>{{ habit.longest_streak }}</td>
+                    <td>
+                        <div class="actions-row">
+                            <a href="{{ url_for('habits.edit_habit', habit_id=habit.id) }}">Edit</a>
+
+                            {% if not habit.completed_today %}
+                            <form method="POST" action="{{ url_for('habits.complete_habit', habit_id=habit.id) }}">
+                                <button type="submit">Complete</button>
+                            </form>
+                            {% else %}
+                            <span class="pill pill-completed">Done ✅</span>
+                            {% endif %}
+
+                            <form method="POST" action="{{ url_for('habits.delete_habit', habit_id=habit.id) }}" onsubmit="return confirm('Delete this habit?');">
+                                <button type="submit" class="btn-danger">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <p class="empty-state">No habits yet. Create your first one!</p>
         {% endif %}
-    {% endwith %}
-
-    {% if habits %}
-        <table border="1" cellpadding="8">
-            <tr>
-                <th>Name</th>
-                <th>Frequency</th>
-                <th>Current Streak</th>
-                <th>Longest Streak</th>
-                <th>Actions</th>
-            </tr>
-            {% for habit in habits %}
-            <tr>
-                <td>{{ habit.name }}</td>
-                <td>{{ habit.frequency }}</td>
-                <td>{{ habit.current_streak }}</td>
-                <td>{{ habit.longest_streak }}</td>
-                                <td>
-                    <a href="{{ url_for('habits.edit_habit', habit_id=habit.id) }}">Edit</a>
-
-                    {% if not habit.completed_today %}
-                    <form method="POST" action="{{ url_for('habits.complete_habit', habit_id=habit.id) }}" style="display:inline;">
-                        <button type="submit">Mark Complete Today</button>
-                    </form>
-                    {% else %}
-                    <span>Done today ✅</span>
-                    {% endif %}
-
-                    <form method="POST" action="{{ url_for('habits.delete_habit', habit_id=habit.id) }}" style="display:inline;" onsubmit="return confirm('Delete this habit?');">
-                        <button type="submit">Delete</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-    {% else %}
-        <p>No habits yet. Create your first one!</p>
-    {% endif %}
-
-    <p><a href="{{ url_for('main.dashboard') }}">Back to Dashboard</a></p>
-</body>
-</html>
+    </div>
+{% endblock %}

@@ -1,32 +1,32 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Create Habit - LifeHub</title>
-</head>
-<body>
-    <h2>Create a New Habit</h2>
+{% extends "base.html" %}
 
-    <form method="POST">
-        {{ form.hidden_tag() }}
+{% block title %}Create Habit - LifeHub{% endblock %}
 
-        <p>
-            {{ form.name.label }}<br>
-            {{ form.name() }}
-        </p>
+{% block content %}
+    <h1>Create a New Habit</h1>
 
-        <p>
-            {{ form.description.label }}<br>
-            {{ form.description(rows=4, cols=40) }}
-        </p>
+    <div class="card" style="max-width: 500px;">
+        <form method="POST">
+            {{ form.hidden_tag() }}
 
-        <p>
-            {{ form.frequency.label }}<br>
-            {{ form.frequency() }}
-        </p>
+            <div class="field">
+                {{ form.name.label }}
+                {{ form.name() }}
+            </div>
 
-        {{ form.submit() }}
-    </form>
+            <div class="field">
+                {{ form.description.label }}
+                {{ form.description(rows=4) }}
+            </div>
 
-    <p><a href="{{ url_for('habits.view_habits') }}">Back to My Habits</a></p>
-</body>
-</html>
+            <div class="field">
+                {{ form.frequency.label }}
+                {{ form.frequency() }}
+            </div>
+
+            {{ form.submit() }}
+        </form>
+    </div>
+
+    <p><a href="{{ url_for('habits.view_habits') }}">← Back to My Habits</a></p>
+{% endblock %}
