@@ -51,7 +51,7 @@ def chat_with_assistant(user_message, tasks, habits):
     ) or "No habits tracked."
 
     system_prompt = f"""You are LifeHub's productivity assistant. You help the user manage their tasks and habits.
-Answer their question helpfully and concisely (max 150 words), using the context below when relevant.
+Answer their question helpfully and concisely (max 250 words), using the context below when relevant.
 
 User's Tasks:
 {task_lines}
@@ -65,7 +65,7 @@ User's Habits:
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_message}
         ],
-        max_tokens=300,
+        max_tokens=600,
         temperature=0.7
     )
 

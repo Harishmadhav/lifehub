@@ -1,26 +1,36 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>AI Assistant - LifeHub</title>
-</head>
-<body>
-    <h1>Chat with LifeHub Assistant</h1>
-    <p><a href="{{ url_for('main.dashboard') }}">Back to Dashboard</a></p>
+{% extends "base.html" %}
 
-    <hr>
+{% block title %}Chat Assistant - LifeHub{% endblock %}
 
-    <form method="POST">
-        <textarea name="message" rows="3" cols="60" placeholder="Ask about your tasks, habits, or productivity..." required>{{ user_message or "" }}</textarea>
-        <br><br>
-        <button type="submit">Ask</button>
-    </form>
+{% block content %}
+    <h1>💬 LifeHub Assistant</h1>
 
-    {% if reply %}
-    <hr>
-    <h3>Assistant:</h3>
-    <div style="max-width: 600px; line-height: 1.6; padding: 15px; border: 1px solid #ccc; border-radius: 8px;">
-        {{ reply | safe }}
+    <div class="card">
+        <div class="chat-window">
+            {% if user_message %}
+                <div class="chat-avatar-row user">
+                    <div class="chat-avatar user">🧑</div>
+                    <div class="chat-bubble user">{{ user_message }}</div>
+                </div>
+            {% endif %}
+
+            {% if reply %}
+                <div class="chat-avatar-row assistant">
+                    <div class="chat-avatar assistant">✨</div>
+                    <div class="chat-bubble assistant">{{ reply | safe }}</div>
+                </div>
+            {% endif %}
+
+            {% if not user_message and not reply %}
+                <div class="chat-empty">Ask me anything about your tasks, habits, or productivity 👋</div>
+            {% endif %}
+        </div>
+
+        <form method="POST">
+            <div class="chat-input-bar">
+                <textarea name="message" rows="1" placeholder="Message LifeHub Assistant..." required></textarea>
+                <button type="submit">Send</button>
+            </div>
+        </form>
     </div>
-    {% endif %}
-</body>
-</html>
+{% endblock %}
