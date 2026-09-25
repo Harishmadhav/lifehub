@@ -1,56 +1,45 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>My Tasks - LifeHub</title>
-</head>
-<body>
-    <h2>My Tasks</h2>
+{% extends "base.html" %}
 
-    <p><a href="{{ url_for('tasks.create_task') }}">+ Create New Task</a></p>
+{% block title %}My Tasks - LifeHub{% endblock %}
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <p style="color: green;">{{ message }}</p>
-            {% endfor %}
+{% block content %}
+    <h1>My Tasks</h1>
+    <p><a href="{{ url_for('tasks.create_task') }}" class="btn">+ Create New Task</a></p>
+
+    <div class="card">
+        {% if tasks %}
+            <table>
+                <tr>
+                    <th>Title</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Due Date</th>
+                    <th>Actions</th>
+                </tr>
+                {% for task in tasks %}
+                               <tr>
+                    <td>{{ task.title }}</td>
+                    <td><span class="pill pill-{{ task.priority }}">{{ task.priority }}</span></td>
+                    <td><span class="pill pill-{{ task.status }}">{{ task.status }}</span></td>
+                    <td>{{ task.due_date if task.due_date else "—" }}</td>
+                    <td>
+                        <a href="{{ url_for('tasks.edit_task', task_id=task.id) }}">Edit</a>
+
+                        {% if task.status != "completed" %}
+                        <form method="POST" action="{{ url_for('tasks.complete_task', task_id=task.id) }}" style="display:inline;">
+                            <button type="submit">Complete</button>
+                        </form>
+                        {% endif %}
+
+                        <form method="POST" action="{{ url_for('tasks.delete_task', task_id=task.id) }}" style="display:inline;" onsubmit="return confirm('Delete this task?');">
+                            <button type="submit" class="btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <p class="empty-state">No tasks yet. Create your first one!</p>
         {% endif %}
-    {% endwith %}
-
-    {% if tasks %}
-        <table border="1" cellpadding="8">
-            <tr>
-                <th>Title</th>
-                <th>Priority</th>
-                <th>Status</th>
-                <th>Due Date</th>
-                <th>Actions</th>
-            </tr>
-                    {% for task in tasks %}
-            <tr>
-                <td>{{ task.title }}</td>
-                <td>{{ task.priority }}</td>
-                <td>{{ task.status }}</td>
-                <td>{{ task.due_date if task.due_date else "—" }}</td>
-                <td>
-                    <a href="{{ url_for('tasks.edit_task', task_id=task.id) }}">Edit</a>
-
-                    {% if task.status != "completed" %}
-                    <form method="POST" action="{{ url_for('tasks.complete_task', task_id=task.id) }}" style="display:inline;">
-                        <button type="submit">Complete</button>
-                    </form>
-                    {% endif %}
-
-                    <form method="POST" action="{{ url_for('tasks.delete_task', task_id=task.id) }}" style="display:inline;" onsubmit="return confirm('Delete this task?');">
-                        <button type="submit">Delete</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-    {% else %}
-        <p>No tasks yet. Create your first one!</p>
-    {% endif %}
-
-    <p><a href="{{ url_for('main.dashboard') }}">Back to Dashboard</a></p>
-</body>
-</html>
+    </div>
+{% endblock %}

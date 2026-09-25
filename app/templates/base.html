@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html data-theme="light">
 <head>
     <title>{% block title %}LifeHub{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,6 +22,7 @@
             <div class="logout">
                 <a href="{{ url_for('auth.logout') }}">Logout</a>
             </div>
+            <button class="theme-toggle" onclick="toggleTheme()">🌓 Toggle Theme</button>
         </aside>
 
         <main class="main">
@@ -36,5 +37,22 @@
             {% block content %}{% endblock %}
         </main>
     </div>
+        <script>
+        function applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+        }
+
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            localStorage.setItem('lifehub-theme', next);
+            applyTheme(next);
+        }
+
+        (function () {
+            const saved = localStorage.getItem('lifehub-theme') || 'light';
+            applyTheme(saved);
+        })();
+    </script>
 </body>
 </html>

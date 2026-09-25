@@ -1,40 +1,40 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Create Task - LifeHub</title>
-</head>
-<body>
-    <h2>Create a New Task</h2>
+{% extends "base.html" %}
 
-    <form method="POST">
-        {{ form.hidden_tag() }}
+{% block title %}Create Task - LifeHub{% endblock %}
 
-        <p>
-            {{ form.title.label }}<br>
-            {{ form.title() }}
-        </p>
+{% block content %}
+    <h1>Create a New Task</h1>
 
-        <p>
-            {{ form.description.label }}<br>
-            {{ form.description() }}
-        </p>
+    <div class="card" style="max-width: 500px;">
+        <form method="POST">
+            {{ form.hidden_tag() }}
 
-        <p>
-            {{ form.priority.label }}<br>
-            {{ form.priority() }}
-        </p>
+            <div class="field">
+                {{ form.title.label }}
+                {{ form.title() }}
+            </div>
 
-                <p>
-            {{ form.due_date.label }} (format: YYYY-MM-DD HH:MM)<br>
-            {{ form.due_date() }}
-            {% for error in form.due_date.errors %}
-                <span style="color: red;">{{ error }}</span>
-            {% endfor %}
-        </p>
+            <div class="field">
+                {{ form.description.label }}
+                {{ form.description(rows=4) }}
+            </div>
 
-        {{ form.submit() }}
-    </form>
+            <div class="field">
+                {{ form.priority.label }}
+                {{ form.priority() }}
+            </div>
 
-    <p><a href="{{ url_for('main.dashboard') }}">Back to Dashboard</a></p>
-</body>
-</html>
+            <div class="field">
+                {{ form.due_date.label }} <span style="color: var(--ink-muted); font-size: 0.8rem;">(format: YYYY-MM-DD HH:MM)</span>
+                {{ form.due_date() }}
+                {% for error in form.due_date.errors %}
+                    <div style="color: var(--danger); font-size: 0.85rem;">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            {{ form.submit() }}
+        </form>
+    </div>
+
+    <p><a href="{{ url_for('tasks.view_tasks') }}">← Back to My Tasks</a></p>
+{% endblock %}

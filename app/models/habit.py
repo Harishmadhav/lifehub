@@ -40,5 +40,7 @@ class Habit(db.Model):
         nullable=False
     )
 
+    completions = db.relationship("HabitCompletion", backref="habit", lazy=True)
+
     def __repr__(self):
         return f"<Habit {self.name}>"

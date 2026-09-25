@@ -5,37 +5,105 @@
 {% block content %}
     <h1>Welcome, {{ user }}!</h1>
 
-    <div class="card">
-        <h3>Today's Tasks</h3>
-        {% if tasks %}
-            <ul>
-                {% for task in tasks %}
-                    <li>{{ task.title }} — {{ task.status }}</li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p class="empty-state">No tasks yet.</p>
-        {% endif %}
-        <a href="{{ url_for('tasks.view_tasks') }}">View all tasks →</a>
+    <div class="quick-actions">
+        <a href="{{ url_for('tasks.create_task') }}">➕ Add Task</a>
+        <a href="{{ url_for('notes.create_note') }}">📝 New Note</a>
+        <a href="{{ url_for('habits.create_habit') }}">🔥 Track Habit</a>
+        <a href="{{ url_for('main.ai_daily_plan') }}">✨ AI Daily Plan</a>
+    </div>
+
+    <div class="overview-grid">
+        <div class="card score-card">
+            <div class="score-ring" style="--pct: {{ productivity_score }};">
+                <div class="score-ring-inner">
+                    <div class="num">{{ productivity_score }}</div>
+                    <div class="lbl">SCORE</div>
+                </div>
+            </div>
+            <div class="score-breakdown">
+                <div class="row"><span>Task Completion</span><strong>{{ task_progress }}%</strong></div>
+                <div class="progress-bar-track"><div class="progress-bar-fill" style="width: {{ task_progress }}%;"></div></div>
+                <br>
+                <div class="row"><span>Habits Done Today</span><strong>{{ habit_completion_rate }}%</strong></div>
+                <div class="progress-bar-track"><div class="progress-bar-fill" style="width: {{ habit_completion_rate }}%;"></div></div>
+            </div>
+        </div>
+
+        <div class="card ai-widget-card">
+            <h3>✨ AI Daily Plan</h3>
+            <p style="color: var(--ink-muted); font-size: 0.9rem;">
+                {{ pending_count }} pending task{{ 's' if pending_count != 1 else '' }} and {{ habits|length }} habit{{ 's' if habits|length != 1 else '' }} to work with today.
+            </p>
+            <a href="{{ url_for('main.ai_daily_plan') }}" class="btn">Generate My Plan</a>
+        </div>
     </div>
 
     <div class="card">
-        <h3>Habit Overview</h3>
-        {% if habits %}
-            <ul>
-                {% for habit in habits %}
-                    <li>{{ habit.name }} — <span class="streak-badge">{{ habit.current_streak }} day streak</span></li>
+        <div class="section-title">
+            <h3>Today's Tasks</h3>
+            <a href="{{ url_for('tasks.view_tasks') }}">View all →</a>
+        </div>
+
+        {% if pending_tasks %}
+            <div class="task-card-list">
+                {% for task in pending_tasks[:6] %}
+                <div class="task-card {{ 'overdue' if task.is_overdue else '' }}">
+                    <form method="POST" action="{{ url_for('tasks.complete_task', task_id=task.id) }}">
+                        <button type="submit" class="check-btn" title="Mark complete"></button>
+                    </form>
+                    <div class="title">{{ task.title }}</div>
+                    <span class="pill pill-{{ task.priority }}">{{ task.priority }}</span>
+                    <span class="meta">
+                        {% if task.due_date %}
+                            {{ 'Overdue' if task.is_overdue else task.due_date.strftime('%b %d, %H:%M') }}
+                        {% else %}
+                            No due date
+                        {% endif %}
+                    </span>
+                </div>
                 {% endfor %}
-            </ul>
+            </div>
+        {% else %}
+            <p class="empty-state">No pending tasks — you're all caught up!</p>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <div class="section-title">
+            <h3>Habit Overview</h3>
+            <a href="{{ url_for('habits.view_habits') }}">View all →</a>
+        </div>
+
+        {% if habits %}
+            <div class="habit-card-grid">
+                {% for habit in habits[:6] %}
+                <div class="habit-card">
+                    <div class="streak">🔥 {{ habit.current_streak }}</div>
+                    <div style="font-size: 0.9rem; margin: 4px 0 8px;">{{ habit.name }}</div>
+                    <div class="progress-bar-track"><div class="progress-bar-fill" style="width: {{ habit.progress_percent }}%;"></div></div>
+                    <div style="font-size: 0.75rem; color: var(--ink-muted); margin-top: 4px;">{{ habit.progress_percent }}% to habit formed</div>
+                </div>
+                {% endfor %}
+            </div>
         {% else %}
             <p class="empty-state">No habits yet.</p>
         {% endif %}
-        <a href="{{ url_for('habits.view_habits') }}">View all habits →</a>
     </div>
 
     <div class="card">
-        <h3>Productivity Summary</h3>
-        <p>Completed tasks: {{ completed_count }}</p>
-        <p>Pending tasks: {{ pending_count }}</p>
+        <div class="section-title">
+            <h3>Upcoming Deadlines</h3>
+        </div>
+
+        {% if upcoming_tasks %}
+            {% for task in upcoming_tasks %}
+            <div class="schedule-item">
+                <span>{{ task.title }}</span>
+                <span class="time">{{ task.due_date.strftime('%b %d, %H:%M') }}</span>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="empty-state">Nothing scheduled with a due date.</p>
+        {% endif %}
     </div>
 {% endblock %}
