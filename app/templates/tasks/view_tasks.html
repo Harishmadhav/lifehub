@@ -21,8 +21,8 @@
                     <td>{{ task.title }}</td>
                     <td><span class="pill pill-{{ task.priority }}">{{ task.priority }}</span></td>
                     <td><span class="pill pill-{{ task.status }}">{{ task.status }}</span></td>
-                    <td>{{ task.due_date if task.due_date else "—" }}</td>
-                                        <td>
+                    <td>{{ task.due_date.strftime('%b %d, %Y %I:%M %p') if task.due_date else "—" }}</td>
+                    <td>
                         <div class="actions-row">
                             <a href="{{ url_for('tasks.edit_task', task_id=task.id) }}">Edit</a>
 

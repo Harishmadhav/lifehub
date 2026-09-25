@@ -19,8 +19,8 @@
                 <tr>
                     <td>{{ note.title }}</td>
                     <td>{{ note.content[:50] }}{% if note.content|length > 50 %}...{% endif %}</td>
-                    <td>{{ note.updated_at.strftime('%b %d, %Y %H:%M') }}</td>
-                                        <td>
+                    <td>{{ note.updated_at.strftime('%b %d, %Y %I:%M %p') }}</td>
+                    <td>
                         <div class="actions-row">
                             <a href="{{ url_for('notes.edit_note', note_id=note.id) }}">Edit</a>
 

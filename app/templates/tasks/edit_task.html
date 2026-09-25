@@ -25,7 +25,7 @@
             </div>
 
             <div class="field">
-                {{ form.due_date.label }} <span style="color: var(--ink-muted); font-size: 0.8rem;">(format: YYYY-MM-DD HH:MM)</span>
+                {{ form.due_date.label }}
                 {{ form.due_date() }}
                 {% for error in form.due_date.errors %}
                     <div style="color: var(--danger); font-size: 0.85rem;">{{ error }}</div>

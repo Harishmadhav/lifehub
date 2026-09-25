@@ -55,7 +55,7 @@
                     <span class="pill pill-{{ task.priority }}">{{ task.priority }}</span>
                     <span class="meta">
                         {% if task.due_date %}
-                            {{ 'Overdue' if task.is_overdue else task.due_date.strftime('%b %d, %H:%M') }}
+                            {{ 'Overdue' if task.is_overdue else task.due_date.strftime('%b %d, %I:%M %p')}}
                         {% else %}
                             No due date
                         {% endif %}

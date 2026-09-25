@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, abort
 from flask_login import login_required, current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, SelectField, DateTimeField, SubmitField
+from wtforms import StringField, TextAreaField, SelectField, DateTimeLocalField, SubmitField
 from wtforms.validators import DataRequired, Optional
 from datetime import datetime
 
@@ -19,9 +19,9 @@ class TaskForm(FlaskForm):
         choices=[("low", "Low"), ("medium", "Medium"), ("high", "High")],
         default="medium"
     )
-    due_date = DateTimeField(
+    due_date = DateTimeLocalField(
         "Due Date",
-        format="%Y-%m-%d %H:%M",
+        format="%Y-%m-%dT%H:%M",
         validators=[Optional()]
     )
     submit = SubmitField("Create Task")
