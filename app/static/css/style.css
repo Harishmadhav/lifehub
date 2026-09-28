@@ -771,3 +771,88 @@ button:hover, input[type=submit]:hover, .btn:hover {
   color: var(--ink-muted);
   margin-left: 10px;
 }
+
+/* ===== Calendar Widget ===== */
+.calendar-wrap {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 24px;
+}
+@media (max-width: 800px) {
+  .calendar-wrap { grid-template-columns: 1fr; }
+}
+
+.cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.cal-nav {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--border);
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+.cal-nav:hover { background: var(--bg); }
+
+.cal-weekdays, .cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+.cal-weekdays div {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+  padding: 4px 0;
+}
+
+.cal-cell {
+  position: relative;
+  aspect-ratio: 1;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ink);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 0;
+}
+.cal-cell:hover { background: var(--bg); }
+.cal-cell.empty { cursor: default; }
+.cal-cell.today { border-color: var(--accent); }
+.cal-cell.selected { background: var(--accent); color: #fff; }
+.cal-cell.selected:hover { background: var(--accent-dark); }
+
+.cal-dot {
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--warn);
+}
+.cal-cell.selected .cal-dot { background: #fff; }
+
+.cal-task {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  background: var(--bg);
+  font-size: 0.9rem;
+}
+.cal-task-meta {
+  color: var(--ink-muted);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}

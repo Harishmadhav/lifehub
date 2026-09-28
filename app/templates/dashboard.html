@@ -55,7 +55,7 @@
                     <span class="pill pill-{{ task.priority }}">{{ task.priority }}</span>
                     <span class="meta">
                         {% if task.due_date %}
-                            {{ 'Overdue' if task.is_overdue else task.due_date.strftime('%b %d, %I:%M %p')}}
+                            {{ 'Overdue' if task.is_overdue else task.due_date.strftime('%b %d, %I:%M %p') }}
                         {% else %}
                             No due date
                         {% endif %}
@@ -92,6 +92,31 @@
 
     <div class="card">
         <div class="section-title">
+            <h3>📅 Calendar</h3>
+        </div>
+
+        <div class="calendar-wrap">
+            <div>
+                <div class="cal-header">
+                    <button type="button" class="cal-nav" id="calPrev">‹</button>
+                    <strong id="calTitle"></strong>
+                    <button type="button" class="cal-nav" id="calNext">›</button>
+                </div>
+                <div class="cal-weekdays">
+                    <div>Su</div><div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div>
+                </div>
+                <div class="cal-grid" id="calGrid"></div>
+            </div>
+
+            <div>
+                <div id="calSelectedTitle" style="font-weight: 600; margin-bottom: 12px;"></div>
+                <div id="calTaskList"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="section-title">
             <h3>Upcoming Deadlines</h3>
         </div>
 
@@ -99,11 +124,129 @@
             {% for task in upcoming_tasks %}
             <div class="schedule-item">
                 <span>{{ task.title }}</span>
-                <span class="time">{{ task.due_date.strftime('%b %d, %H:%M') }}</span>
+                <span class="time">{{ task.due_date.strftime('%b %d, %I:%M %p') }}</span>
             </div>
             {% endfor %}
         {% else %}
             <p class="empty-state">Nothing scheduled with a due date.</p>
         {% endif %}
     </div>
+
+    <script>
+        const calTasks = {{ calendar_tasks|tojson }};
+
+        const today = new Date();
+        let calYear = today.getFullYear();
+        let calMonth = today.getMonth();
+
+        function pad(n) { return String(n).padStart(2, '0'); }
+        function dateStr(y, m, d) { return y + '-' + pad(m + 1) + '-' + pad(d); }
+
+        let selectedDate = dateStr(today.getFullYear(), today.getMonth(), today.getDate());
+        const todayStr = selectedDate;
+
+        function renderCalendar() {
+            const first = new Date(calYear, calMonth, 1);
+            const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+            const startDay = first.getDay();
+
+            document.getElementById('calTitle').textContent =
+                first.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+
+            const grid = document.getElementById('calGrid');
+            grid.innerHTML = '';
+
+            for (let i = 0; i < startDay; i++) {
+                const empty = document.createElement('div');
+                empty.className = 'cal-cell empty';
+                grid.appendChild(empty);
+            }
+
+            for (let d = 1; d <= daysInMonth; d++) {
+                const ds = dateStr(calYear, calMonth, d);
+                const hasTasks = calTasks.some(t => t.date === ds);
+
+                const cell = document.createElement('button');
+                cell.type = 'button';
+                cell.className = 'cal-cell';
+                if (ds === todayStr) cell.classList.add('today');
+                if (ds === selectedDate) cell.classList.add('selected');
+                cell.textContent = d;
+
+                if (hasTasks) {
+                    const dot = document.createElement('span');
+                    dot.className = 'cal-dot';
+                    cell.appendChild(dot);
+                }
+
+                cell.addEventListener('click', function () {
+                    selectedDate = ds;
+                    renderCalendar();
+                    renderTaskList();
+                });
+
+                grid.appendChild(cell);
+            }
+        }
+
+        function renderTaskList() {
+            const heading = document.getElementById('calSelectedTitle');
+            const list = document.getElementById('calTaskList');
+            list.innerHTML = '';
+
+            const niceDate = new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', {
+                weekday: 'long', month: 'short', day: 'numeric', year: 'numeric'
+            });
+            heading.textContent = niceDate;
+
+            const dayTasks = calTasks
+                .filter(t => t.date === selectedDate)
+                .sort((a, b) => a.time.localeCompare(b.time));
+
+            if (dayTasks.length === 0) {
+                const empty = document.createElement('p');
+                empty.className = 'empty-state';
+                empty.textContent = 'No tasks due on this day.';
+                list.appendChild(empty);
+                return;
+            }
+
+            dayTasks.forEach(function (t) {
+                const row = document.createElement('div');
+                row.className = 'cal-task';
+
+                const title = document.createElement('span');
+                title.textContent = t.title;
+
+                const right = document.createElement('span');
+                right.className = 'cal-task-meta';
+
+                const pill = document.createElement('span');
+                pill.className = 'pill pill-' + t.status;
+                pill.textContent = t.status;
+
+                right.appendChild(pill);
+                right.appendChild(document.createTextNode(' ' + t.time));
+
+                row.appendChild(title);
+                row.appendChild(right);
+                list.appendChild(row);
+            });
+        }
+
+        document.getElementById('calPrev').addEventListener('click', function () {
+            calMonth--;
+            if (calMonth < 0) { calMonth = 11; calYear--; }
+            renderCalendar();
+        });
+
+        document.getElementById('calNext').addEventListener('click', function () {
+            calMonth++;
+            if (calMonth > 11) { calMonth = 0; calYear++; }
+            renderCalendar();
+        });
+
+        renderCalendar();
+        renderTaskList();
+    </script>
 {% endblock %}

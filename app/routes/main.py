@@ -24,7 +24,7 @@ def dashboard():
 
     task_progress = round((completed_count / total_tasks) * 100) if total_tasks > 0 else 0
 
-    now = datetime.utcnow()
+    now = datetime.now()
     # Mark overdue: pending + has a due date in the past
     for t in pending_tasks:
         t.is_overdue = bool(t.due_date and t.due_date < now)
@@ -34,6 +34,16 @@ def dashboard():
         [t for t in pending_tasks if t.due_date],
         key=lambda t: t.due_date
     )[:5]
+    calendar_tasks = [
+        {
+            "title": t.title,
+            "priority": t.priority,
+            "status": t.status,
+            "date": t.due_date.strftime("%Y-%m-%d"),
+            "time": t.due_date.strftime("%I:%M %p"),
+        }
+        for t in all_tasks if t.due_date
+    ]
 
     recent_tasks = sorted(all_tasks, key=lambda t: t.created_at, reverse=True)[:5]
 
@@ -66,6 +76,7 @@ def dashboard():
 
     return render_template(
         "dashboard.html",
+                calendar_tasks=calendar_tasks,
         user=current_user.username,
         pending_tasks=pending_tasks,
         completed_count=completed_count,
