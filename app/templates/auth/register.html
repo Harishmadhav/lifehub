@@ -1,39 +1,91 @@
 <!DOCTYPE html>
-<html lang="en">
+<html data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - LifeHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-
 <body>
+    <div class="auth-page">
+        <div class="auth-panel">
+            <div class="auth-panel-content">
+                <div class="brand">LifeHub</div>
+                <div class="tagline">Join LifeHub and turn your daily chaos into clear, trackable progress.</div>
 
-    <h1>Create your LifeHub account</h1>
-
-    <form method="POST">
-
-        {{ form.hidden_tag() }}
-
-        <div>
-            {{ form.username.label }}
-            {{ form.username() }}
+                <div class="auth-feature-list">
+                    <div class="auth-feature">
+                        <div class="icon">📝</div>
+                        <div>
+                            <div class="text-label">Notes & tasks together</div>
+                            <div class="text-desc">Everything you need to stay organized</div>
+                        </div>
+                    </div>
+                    <div class="auth-feature">
+                        <div class="icon">📊</div>
+                        <div>
+                            <div class="text-label">Visual analytics</div>
+                            <div class="text-desc">See your productivity trends at a glance</div>
+                        </div>
+                    </div>
+                    <div class="auth-feature">
+                        <div class="icon">💬</div>
+                        <div>
+                            <div class="text-label">Chat with your assistant</div>
+                            <div class="text-desc">Ask questions, get real, contextual answers</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div>
-            {{ form.email.label }}
-            {{ form.email() }}
+        <div class="auth-form-side">
+            <div class="auth-card">
+                <div class="auth-brand-mobile">LifeHub</div>
+                <div class="auth-title">Create your account</div>
+                <div class="auth-subtitle">Start building better habits today.</div>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="flash {{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+
+                    <div class="field">
+                        {{ form.username.label }}
+                        {{ form.username() }}
+                    </div>
+
+                    <div class="field">
+                        {{ form.email.label }}
+                        {{ form.email() }}
+                    </div>
+
+                    <div class="field">
+                        {{ form.password.label }}
+                        {{ form.password() }}
+                    </div>
+
+                    {{ form.submit() }}
+                </form>
+
+                <div class="auth-switch">
+                    Already have an account? <a href="{{ url_for('auth.login') }}">Log in</a>
+                </div>
+            </div>
         </div>
+    </div>
 
-        <div>
-            {{ form.password.label }}
-            {{ form.password() }}
-        </div>
-
-        <div>
-            {{ form.submit() }}
-        </div>
-
-    </form>
-
+    <script>
+        (function () {
+            const saved = localStorage.getItem('lifehub-theme') || 'light';
+            document.documentElement.setAttribute('data-theme', saved);
+        })();
+    </script>
 </body>
 </html>

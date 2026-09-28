@@ -3,34 +3,40 @@
 {% block title %}Chat Assistant - LifeHub{% endblock %}
 
 {% block content %}
-    <h1>💬 LifeHub Assistant</h1>
+    <div class="chat-page-wrapper">
+        <h1>💬 LifeHub Assistant</h1>
 
-    <div class="card">
-        <div class="chat-window">
-            {% if user_message %}
-                <div class="chat-avatar-row user">
-                    <div class="chat-avatar user">🧑</div>
-                    <div class="chat-bubble user">{{ user_message }}</div>
+        <div class="chat-scroll-area">
+            <div class="card">
+                <div class="chat-window">
+                    {% if user_message %}
+                        <div class="chat-avatar-row user">
+                            <div class="chat-avatar user">🧑</div>
+                            <div class="chat-bubble user">{{ user_message }}</div>
+                        </div>
+                    {% endif %}
+
+                    {% if reply %}
+                        <div class="chat-avatar-row assistant">
+                            <div class="chat-avatar assistant">✨</div>
+                            <div class="chat-bubble assistant">{{ reply | safe }}</div>
+                        </div>
+                    {% endif %}
+
+                    {% if not user_message and not reply %}
+                        <div class="chat-empty">Ask me anything about your tasks, habits, or productivity 👋</div>
+                    {% endif %}
                 </div>
-            {% endif %}
-
-            {% if reply %}
-                <div class="chat-avatar-row assistant">
-                    <div class="chat-avatar assistant">✨</div>
-                    <div class="chat-bubble assistant">{{ reply | safe }}</div>
-                </div>
-            {% endif %}
-
-            {% if not user_message and not reply %}
-                <div class="chat-empty">Ask me anything about your tasks, habits, or productivity 👋</div>
-            {% endif %}
+            </div>
         </div>
 
-        <form method="POST">
-            <div class="chat-input-bar">
-                <textarea name="message" rows="1" placeholder="Message LifeHub Assistant..." required></textarea>
-                <button type="submit">Send</button>
-            </div>
-        </form>
+        <div class="chat-input-bar-fixed">
+            <form method="POST">
+                <div class="chat-input-bar">
+                    <textarea name="message" rows="1" placeholder="Message LifeHub Assistant..." required onInput="this.style.height='auto'; this.style.height=(this.scrollHeight)+'px';"></textarea>
+                    <button type="submit">Send</button>
+                </div>
+            </form>
+        </div>
     </div>
 {% endblock %}

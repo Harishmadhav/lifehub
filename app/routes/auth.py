@@ -57,7 +57,8 @@ def register():
         ).first()
 
         if existing_user:
-            return "Username or email already exists."
+            flash("Username or email already exists.", "danger")
+            return render_template("auth/register.html", form=form)
 
         password_hash = bcrypt.hashpw(
             form.password.data.encode("utf-8"),
@@ -73,7 +74,8 @@ def register():
         db.session.add(user)
         db.session.commit()
 
-        return "Registration successful!"
+        flash("Registration successful! Please log in.", "success")
+        return redirect(url_for("auth.login"))
 
     return render_template(
         "auth/register.html",

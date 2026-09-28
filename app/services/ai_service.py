@@ -1,3 +1,4 @@
+import json
 import os
 from groq import Groq
 
@@ -70,3 +71,51 @@ User's Habits:
     )
 
     return response.choices[0].message.content
+
+def suggest_task(tasks, habits, hint=""):
+    task_lines = "\n".join(
+        f"- {t.title} (priority: {t.priority}, status: {t.status})"
+        for t in tasks
+    ) or "No existing tasks."
+
+    habit_lines = "\n".join(f"- {h.name}" for h in habits) or "No habits tracked."
+
+    hint_line = f'The user has started typing this idea: "{hint}". Build on it.' if hint else "Suggest one useful new task."
+
+    prompt = f"""You are a productivity assistant. {hint_line}
+
+User's recent tasks:
+{task_lines}
+
+User's habits:
+{habit_lines}
+
+Respond with ONLY a JSON object, no explanation, no markdown, in exactly this format:
+{{"title": "short task title", "description": "one or two sentence description", "priority": "low or medium or high"}}"""
+
+    response = client.chat.completions.create(
+        model="openai/gpt-oss-120b",
+        messages=[{"role": "user", "content": prompt}],
+        max_tokens=800,
+        temperature=0.7
+    )
+
+    text = response.choices[0].message.content.strip()
+
+    # Remove markdown code fences if the model added them
+    if text.startswith("```"):
+        text = text.strip("`").strip()
+        if text.lower().startswith("json"):
+            text = text[4:].strip()
+
+    data = json.loads(text)
+
+    priority = str(data.get("priority", "medium")).lower()
+    if priority not in ("low", "medium", "high"):
+        priority = "medium"
+
+    return {
+        "title": str(data.get("title", ""))[:200],
+        "description": str(data.get("description", "")),
+        "priority": priority
+    }

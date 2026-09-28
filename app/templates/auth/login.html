@@ -1,33 +1,86 @@
 <!DOCTYPE html>
-<html>
+<html data-theme="light">
 <head>
     <title>Login - LifeHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <h2>Login to LifeHub</h2>
+    <div class="auth-page">
+        <div class="auth-panel">
+            <div class="auth-panel-content">
+                <div class="brand">LifeHub</div>
+                <div class="tagline">Your daily companion for tasks, habits, and focused productivity — powered by AI.</div>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <p style="color: red;">{{ message }}</p>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
+                <div class="auth-feature-list">
+                    <div class="auth-feature">
+                        <div class="icon">✅</div>
+                        <div>
+                            <div class="text-label">Stay on top of tasks</div>
+                            <div class="text-desc">Priorities, due dates, and progress in one place</div>
+                        </div>
+                    </div>
+                    <div class="auth-feature">
+                        <div class="icon">🔥</div>
+                        <div>
+                            <div class="text-label">Build lasting habits</div>
+                            <div class="text-desc">Track streaks and stay consistent every day</div>
+                        </div>
+                    </div>
+                    <div class="auth-feature">
+                        <div class="icon">✨</div>
+                        <div>
+                            <div class="text-label">AI-powered insights</div>
+                            <div class="text-desc">Get a smart daily plan tailored to your day</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <form method="POST">
-        {{ form.hidden_tag() }}
+        <div class="auth-form-side">
+            <div class="auth-card">
+                <div class="auth-brand-mobile">LifeHub</div>
+                <div class="auth-title">Welcome back</div>
+                <div class="auth-subtitle">Log in to continue to your dashboard.</div>
 
-        <p>
-            {{ form.email.label }}<br>
-            {{ form.email() }}
-        </p>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="flash {{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
 
-        <p>
-            {{ form.password.label }}<br>
-            {{ form.password() }}
-        </p>
+                <form method="POST">
+                    {{ form.hidden_tag() }}
 
-        {{ form.submit() }}
-    </form>
+                    <div class="field">
+                        {{ form.email.label }}
+                        {{ form.email() }}
+                    </div>
+
+                    <div class="field">
+                        {{ form.password.label }}
+                        {{ form.password() }}
+                    </div>
+
+                    {{ form.submit() }}
+                </form>
+
+                <div class="auth-switch">
+                    Don't have an account? <a href="{{ url_for('auth.register') }}">Create one</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const saved = localStorage.getItem('lifehub-theme') || 'light';
+            document.documentElement.setAttribute('data-theme', saved);
+        })();
+    </script>
 </body>
 </html>

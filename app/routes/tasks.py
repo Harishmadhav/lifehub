@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, abort
+from flask import Blueprint, render_template, redirect, url_for, flash, abort, jsonify, request
 from flask_login import login_required, current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, SelectField, DateTimeLocalField, SubmitField
@@ -7,6 +7,8 @@ from datetime import datetime
 
 from app.extensions import db
 from app.models.task import Task
+from app.models.habit import Habit
+from app.services.ai_service import suggest_task
 
 tasks_bp = Blueprint("tasks", __name__)
 
@@ -110,3 +112,17 @@ def complete_task(task_id):
 
     flash("Task marked as complete.", "success")
     return redirect(url_for("tasks.view_tasks"))
+
+@tasks_bp.route("/tasks/ai-suggest")
+@login_required
+def ai_suggest_task():
+    hint = request.args.get("hint", "").strip()
+
+    tasks = Task.query.filter_by(user_id=current_user.id).order_by(Task.created_at.desc()).limit(10).all()
+    habits = Habit.query.filter_by(user_id=current_user.id).all()
+
+    try:
+        suggestion = suggest_task(tasks, habits, hint)
+        return jsonify(suggestion)
+    except Exception:
+        return jsonify({"error": "Couldn't generate a suggestion right now. Please try again."}), 500
