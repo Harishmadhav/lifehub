@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template
 from flask_login import login_required, current_user
-from datetime import datetime, date
+from datetime import datetime, date,timedelta
 import markdown
 
 from app.models.task import Task
@@ -59,6 +59,27 @@ def dashboard():
     ) if habits else 0
     habit_completion_rate = round((habits_done_today / len(habits)) * 100) if habits else 0
 
+    reminders = []
+
+    overdue_tasks = [t for t in pending_tasks if t.due_date and t.due_date < now]
+    due_soon_tasks = [
+        t for t in pending_tasks
+        if t.due_date and now <= t.due_date <= now + timedelta(hours=24)
+    ]
+
+    for t in overdue_tasks:
+        reminders.append({"kind": "overdue", "text": f"'{t.title}' is overdue"})
+
+    for t in due_soon_tasks:
+        reminders.append({
+            "kind": "soon",
+            "text": f"'{t.title}' is due within 24 hours ({t.due_date.strftime('%b %d, %I:%M %p')})"
+        })
+
+    for h in habits:
+        if not any(c.completed_date == today for c in h.completions):
+            reminders.append({"kind": "habit", "text": f"Don't forget your habit: {h.name}"})
+
     # Overall daily progress = average of task completion % and today's habit completion %
     overall_progress = round((task_progress + habit_completion_rate) / 2)
 
@@ -76,7 +97,8 @@ def dashboard():
 
     return render_template(
         "dashboard.html",
-                calendar_tasks=calendar_tasks,
+        reminders=reminders,
+        calendar_tasks=calendar_tasks,
         user=current_user.username,
         pending_tasks=pending_tasks,
         completed_count=completed_count,

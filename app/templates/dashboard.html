@@ -5,6 +5,20 @@
 {% block content %}
     <h1>Welcome, {{ user }}!</h1>
 
+    {% if reminders %}
+    <div class="card reminder-card" id="reminderCard">
+        <div class="section-title">
+            <h3>🔔 Reminders</h3>
+            <button type="button" class="cal-nav" id="reminderClose" title="Dismiss">✕</button>
+        </div>
+        <ul class="reminder-list">
+            {% for r in reminders %}
+                <li class="reminder-item {{ r.kind }}">{{ r.text }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
     <div class="quick-actions">
         <a href="{{ url_for('tasks.create_task') }}">➕ Add Task</a>
         <a href="{{ url_for('notes.create_note') }}">📝 New Note</a>
@@ -248,5 +262,44 @@
 
         renderCalendar();
         renderTaskList();
+    </script>
+        <script>
+        (function () {
+            const reminderCount = {{ reminders|length }};
+            const username = {{ user|tojson }};
+
+            const closeBtn = document.getElementById('reminderClose');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function () {
+                    document.getElementById('reminderCard').remove();
+                });
+            }
+
+            if (reminderCount === 0) return;
+
+            // Popup only once per day per user
+            const d = new Date();
+            const key = 'lifehub-reminder-' + username + '-' + d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+            try {
+                if (localStorage.getItem(key)) return;
+                localStorage.setItem(key, '1');
+            } catch (e) {}
+
+            let container = document.getElementById('toastContainer');
+            if (!container) {
+                container = document.createElement('div');
+                container.className = 'toast-container';
+                container.id = 'toastContainer';
+                document.body.appendChild(container);
+            }
+
+            const toast = document.createElement('div');
+            toast.className = 'toast info';
+            toast.textContent = '🔔 You have ' + reminderCount + ' reminder' +
+                (reminderCount === 1 ? '' : 's') + ' today. Check the Reminders card.';
+            container.appendChild(toast);
+
+            setTimeout(function () { toast.remove(); }, 6000);
+        })();
     </script>
 {% endblock %}
