@@ -68,7 +68,24 @@
 
                     <div class="field">
                         {{ form.password.label }}
-                        {{ form.password() }}
+                        <div class="password-field-wrap">
+                            {{ form.password(id="password") }}
+                            <button type="button" class="pw-toggle" data-target="password">👁</button>
+                        </div>
+                        <div class="pw-strength-track"><div class="pw-strength-fill" id="pwStrengthFill"></div></div>
+                        <div class="pw-strength-label" id="pwStrengthLabel"></div>
+                    </div>
+
+                    <div class="field">
+                        {{ form.confirm_password.label }}
+                        <div class="password-field-wrap">
+                            {{ form.confirm_password(id="confirm_password") }}
+                            <button type="button" class="pw-toggle" data-target="confirm_password">👁</button>
+                        </div>
+                        <div class="pw-match-msg" id="pwMatchMsg"></div>
+                        {% for error in form.confirm_password.errors %}
+                            <div style="color: var(--danger); font-size: 0.85rem;">{{ error }}</div>
+                        {% endfor %}
                     </div>
 
                     {{ form.submit() }}
@@ -80,6 +97,77 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.querySelectorAll('.pw-toggle').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                const input = document.getElementById(btn.dataset.target);
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    btn.textContent = '🙈';
+                } else {
+                    input.type = 'password';
+                    btn.textContent = '👁';
+                }
+            });
+        });
+
+        const pwInput = document.getElementById('password');
+        const fill = document.getElementById('pwStrengthFill');
+        const label = document.getElementById('pwStrengthLabel');
+
+        function scorePassword(pw) {
+            let score = 0;
+            if (pw.length >= 8) score++;
+            if (pw.length >= 12) score++;
+            if (/[A-Z]/.test(pw)) score++;
+            if (/[0-9]/.test(pw)) score++;
+            if (/[^A-Za-z0-9]/.test(pw)) score++;
+            return score;
+        }
+
+        pwInput.addEventListener('input', function () {
+            const pw = pwInput.value;
+            if (!pw) {
+                fill.style.width = '0%';
+                label.textContent = '';
+                return;
+            }
+            const score = scorePassword(pw);
+            const levels = [
+                { pct: 20, color: 'var(--danger)', text: 'Very weak' },
+                { pct: 40, color: 'var(--danger)', text: 'Weak' },
+                { pct: 60, color: 'var(--warn)', text: 'Fair' },
+                { pct: 80, color: 'var(--accent)', text: 'Good' },
+                { pct: 100, color: 'var(--accent-dark)', text: 'Strong' }
+            ];
+            const level = levels[Math.min(score, 5) - 1] || levels[0];
+            fill.style.width = level.pct + '%';
+            fill.style.background = level.color;
+            label.textContent = level.text;
+        });
+
+        const confirmInput = document.getElementById('confirm_password');
+        const matchMsg = document.getElementById('pwMatchMsg');
+
+        function checkMatch() {
+            if (!confirmInput.value) {
+                matchMsg.textContent = '';
+                matchMsg.className = 'pw-match-msg';
+                return;
+            }
+            if (confirmInput.value === pwInput.value) {
+                matchMsg.textContent = '✓ Passwords match';
+                matchMsg.className = 'pw-match-msg ok';
+            } else {
+                matchMsg.textContent = '✗ Passwords do not match';
+                matchMsg.className = 'pw-match-msg bad';
+            }
+        }
+
+        pwInput.addEventListener('input', checkMatch);
+        confirmInput.addEventListener('input', checkMatch);
+    </script>
 
     <script>
         (function () {

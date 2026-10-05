@@ -52,7 +52,8 @@ def dashboard():
     today = date.today()
     for h in habits:
         h.progress_percent = min(round((h.current_streak / 21) * 100), 100)
-
+        h.completed_today = any(c.completed_date == today for c in h.completions)
+        
     habits_done_today = sum(
         1 for h in habits
         if any(c.completed_date == today for c in h.completions)

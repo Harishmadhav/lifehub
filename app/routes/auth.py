@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import DataRequired, Email, Length
+from wtforms.validators import DataRequired, Email, Length, EqualTo
 from flask_login import login_user, logout_user, login_required
 import bcrypt
 
@@ -28,8 +28,12 @@ class RegistrationForm(FlaskForm):
         validators=[DataRequired(), Length(min=8)]
     )
 
-    submit = SubmitField("Create Account")
+    confirm_password = PasswordField(
+        "Confirm Password",
+        validators=[DataRequired(), EqualTo("password", message="Passwords do not match.")]
+    )
 
+    submit = SubmitField("Create Account")
 
 class LoginForm(FlaskForm):
     email = StringField(

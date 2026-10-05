@@ -96,6 +96,14 @@
                     <div style="font-size: 0.9rem; margin: 4px 0 8px;">{{ habit.name }}</div>
                     <div class="progress-bar-track"><div class="progress-bar-fill" style="width: {{ habit.progress_percent }}%;"></div></div>
                     <div style="font-size: 0.75rem; color: var(--ink-muted); margin-top: 4px;">{{ habit.progress_percent }}% to habit formed</div>
+
+                    {% if not habit.completed_today %}
+                    <form method="POST" action="{{ url_for('habits.complete_habit', habit_id=habit.id) }}">
+                        <button type="submit" class="habit-complete-btn">Mark Done Today</button>
+                    </form>
+                    {% else %}
+                    <span class="habit-done-label">✅ Done today</span>
+                    {% endif %}
                 </div>
                 {% endfor %}
             </div>

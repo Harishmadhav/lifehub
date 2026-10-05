@@ -856,3 +856,79 @@ button:hover, input[type=submit]:hover, .btn:hover {
   font-size: 0.78rem;
   white-space: nowrap;
 }
+
+/* ===== Reminders ===== */
+.reminder-card { border-left: 4px solid var(--warn); }
+.reminder-list { list-style: none; margin: 0; padding: 0; }
+.reminder-item {
+  padding: 8px 0;
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--border);
+}
+.reminder-item:last-child { border-bottom: none; }
+.reminder-item.overdue { color: var(--danger); }
+.reminder-item.soon { color: var(--warn); }
+.reminder-item.habit { color: var(--accent-dark); }
+
+/* ===== Password field toggle + strength meter ===== */
+.password-field-wrap {
+  position: relative;
+}
+.password-field-wrap input {
+  padding-right: 42px;
+}
+.pw-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--ink-muted);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 4px;
+  width: auto;
+  margin-top: 0;
+}
+.pw-toggle:hover { background: transparent; color: var(--ink); }
+
+.pw-strength-track {
+  height: 5px;
+  background: var(--border);
+  border-radius: 999px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+.pw-strength-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--danger);
+  transition: width .2s, background-color .2s;
+}
+.pw-strength-label {
+  font-size: 0.78rem;
+  color: var(--ink-muted);
+  margin-top: 4px;
+}
+
+.pw-match-msg {
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
+.pw-match-msg.ok { color: var(--accent-dark); }
+.pw-match-msg.bad { color: var(--danger); }
+
+.habit-card form { margin-top: 10px; }
+.habit-card button.habit-complete-btn {
+  width: 100%;
+  padding: 7px;
+  font-size: 0.8rem;
+}
+.habit-card .habit-done-label {
+  display: block;
+  text-align: center;
+  margin-top: 10px;
+  font-size: 0.8rem;
+  color: var(--accent-dark);
+}
